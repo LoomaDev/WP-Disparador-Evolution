@@ -5,7 +5,13 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 5000,
-    allowedHosts: ['*']
+    // Allow localhost and Replit domains (domains can change per session)
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      process.env.REPLIT_DEV_DOMAIN,
+      ...(process.env.REPLIT_DOMAINS || '').split(',').map(s => s.trim())
+    ].filter(Boolean)
   },
   resolve: {
     alias: {
