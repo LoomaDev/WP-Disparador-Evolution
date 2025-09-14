@@ -11,7 +11,7 @@ let mockContacts: Contact[] = [
 
 let mockSettings: AppSettings = {
   apiUrl: 'https://api.evolution.com/v1',
-  apiKey: 'supersecretapikey',
+  apiKey: '',
   defaultMessage: 'Olá {{nome}}, esta é uma mensagem de teste!',
 };
 
