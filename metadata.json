@@ -1,0 +1,5 @@
+{
+  "name": "WP Disparador Evolution",
+  "description": "A web application to manage bulk WhatsApp messaging through the Evolution API. This interface allows for contact management, message templating, and viewing comprehensive reports.",
+  "requestFramePermissions": []
+}
