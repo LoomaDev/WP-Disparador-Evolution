@@ -2,6 +2,11 @@
 
 WP Disparador Evolution is a web application for managing bulk WhatsApp messaging through the Evolution API. The application provides a comprehensive interface for contact management, message templating, and viewing detailed messaging reports. It allows users to upload CSV files with contacts, compose messages, track sending status, and monitor delivery statistics through an intuitive dashboard.
 
+**Latest Updates (September 2025):**
+- Added "Clear Contacts" functionality in Dashboard with confirmation modal for removing all contacts from reports
+- Implemented comprehensive Evolution API integration for WhatsApp instance management (create, connect, list, delete instances)
+- Enhanced Settings page with Evolution API configuration and instance management capabilities
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -22,14 +27,24 @@ The application is built using React 19 with TypeScript, utilizing a component-b
 
 The application implements a dual-theme system (light/dark) with automatic detection of user's system preference. Tailwind CSS provides utility-first styling with custom configurations for responsive design. The theme state is persisted in localStorage and applied through CSS classes on the document element.
 
-## Mock Data Layer
+## Mock Data Layer & Evolution API Integration
 
-Currently implements a mock API service layer that simulates real API interactions with artificial delays to mimic network conditions. This allows for development and testing without requiring the actual Evolution API to be available.
+Currently implements a mock API service layer that simulates real API interactions with artificial delays to mimic network conditions. The mock services now include comprehensive Evolution API functionality for WhatsApp instance management.
 
 **Data Models:**
 - **Contact**: Represents individual message recipients with status tracking
 - **ReportStats**: Aggregated statistics for dashboard display
 - **AppSettings**: Configuration for API connection and default messages
+- **EvolutionInstance**: WhatsApp instance with connection status, QR code data, and API keys
+- **CreateInstanceRequest**: Request structure for creating new WhatsApp instances
+- **EvolutionSettings**: Extended settings including global API key and instance management
+
+**Evolution API Features:**
+- Instance creation with QR code generation for WhatsApp connection
+- Real-time connection status monitoring
+- Instance management (list, connect, delete)
+- Proper API key handling and authentication simulation
+- QR code modal display for easy WhatsApp scanning
 
 ## File Upload and Processing
 
