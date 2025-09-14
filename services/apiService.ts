@@ -1,5 +1,5 @@
 
-import type { Contact, ReportStats, AppSettings } from '../types';
+import type { Contact, ReportStats, AppSettings, EvolutionInstance, CreateInstanceRequest, EvolutionSettings } from '../types';
 import { ContactStatus } from '../types';
 
 let mockContacts: Contact[] = [
@@ -9,10 +9,13 @@ let mockContacts: Contact[] = [
   { id: 4, nome: 'Ana Costa', numero: '5541999998888', status: ContactStatus.Pending, data_envio: new Date().toISOString() },
 ];
 
-let mockSettings: AppSettings = {
+let mockSettings: EvolutionSettings = {
   apiUrl: 'https://api.evolution.com/v1',
   apiKey: '',
+  globalApiKey: '',
   defaultMessage: 'Olá {{nome}}, esta é uma mensagem de teste!',
+  instances: [],
+  selectedInstance: undefined,
 };
 
 const artificialDelay = <T,>(data: T): Promise<T> => {
@@ -29,11 +32,11 @@ export const getContactsAndStats = async (): Promise<{ contacts: Contact[]; stat
   return artificialDelay({ contacts: [...mockContacts].sort((a,b) => b.id - a.id), stats });
 };
 
-export const getSettings = async (): Promise<AppSettings> => {
+export const getSettings = async (): Promise<EvolutionSettings> => {
   return artificialDelay({ ...mockSettings });
 };
 
-export const updateSettings = async (newSettings: AppSettings): Promise<AppSettings> => {
+export const updateSettings = async (newSettings: EvolutionSettings): Promise<EvolutionSettings> => {
   mockSettings = { ...newSettings };
   return artificialDelay({ ...mockSettings });
 };
@@ -70,4 +73,101 @@ export const sendBulkMessages = async (message: string, contacts: { nome: string
   });
 
   return artificialDelay({ success: true });
+};
+
+// Limpar contatos dos relatórios
+export const clearAllContacts = async (): Promise<{ success: boolean; message: string }> => {
+  mockContacts = [];
+  return artificialDelay({ success: true, message: 'Todos os contatos foram removidos com sucesso!' });
+};
+
+// Evolution API Services
+export const createEvolutionInstance = async (instanceData: CreateInstanceRequest): Promise<EvolutionInstance> => {
+  // Simular resposta real da Evolution API
+  const hash = `api_key_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
+  const newInstance: EvolutionInstance = {
+    instanceName: instanceData.instanceName,
+    instanceId: `instance_${Date.now()}`,
+    status: 'created',
+    integration: instanceData.integration || 'WHATSAPP-BAILEYS',
+    createdAt: new Date().toISOString(),
+    hash: hash,
+    qrcode: instanceData.qrcode ? {
+      base64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAOXUlEQVR4nO2dz0sTwwwHJxcJ',
+      code: Math.random().toString(36).substr(2, 15)
+    } : undefined
+  };
+
+  mockSettings.instances.push(newInstance);
+  
+  // Se QR code foi solicitado, configurar auto-connect simulado
+  if (instanceData.qrcode) {
+    setTimeout(() => {
+      const instance = mockSettings.instances.find(i => i.instanceName === instanceData.instanceName);
+      if (instance) {
+        instance.status = Math.random() > 0.3 ? 'connected' : 'disconnected';
+      }
+    }, 5000); // Simular tempo de escaneamento do QR
+  }
+
+  return artificialDelay(newInstance);
+};
+
+export const fetchEvolutionInstances = async (): Promise<EvolutionInstance[]> => {
+  return artificialDelay([...mockSettings.instances]);
+};
+
+export const connectEvolutionInstance = async (instanceName: string): Promise<{ success: boolean; qrcode?: { base64: string; code: string }; message: string }> => {
+  const instance = mockSettings.instances.find(i => i.instanceName === instanceName);
+  if (!instance) {
+    return artificialDelay({ success: false, message: 'Instância não encontrada!' });
+  }
+
+  if (instance.status === 'connected') {
+    return artificialDelay({ success: false, message: 'Instância já está conectada!' });
+  }
+
+  instance.status = 'connecting';
+  const newQrCode = {
+    base64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAACXBIWXMAAAsTAAALEwEAmpwYAAAOXUlEQVR4nO2dz0sTwwwHJxcJ',
+    code: Math.random().toString(36).substr(2, 15)
+  };
+  
+  instance.qrcode = newQrCode;
+
+  // Simular conexão após alguns segundos
+  setTimeout(() => {
+    if (instance.status === 'connecting') {
+      instance.status = Math.random() > 0.3 ? 'connected' : 'disconnected';
+    }
+  }, 5000);
+
+  return artificialDelay({ 
+    success: true, 
+    qrcode: newQrCode,
+    message: 'QR Code gerado! Escaneie com o WhatsApp para conectar.' 
+  });
+};
+
+export const getInstanceConnectionStatus = async (instanceName: string): Promise<{ status: string; message: string }> => {
+  const instance = mockSettings.instances.find(i => i.instanceName === instanceName);
+  if (!instance) {
+    return artificialDelay({ status: 'not_found', message: 'Instância não encontrada!' });
+  }
+
+  return artificialDelay({ 
+    status: instance.status, 
+    message: instance.status === 'connected' ? 'Conectado' : 'Desconectado' 
+  });
+};
+
+export const deleteEvolutionInstance = async (instanceName: string): Promise<{ success: boolean; message: string }> => {
+  const instanceIndex = mockSettings.instances.findIndex(i => i.instanceName === instanceName);
+  if (instanceIndex === -1) {
+    return artificialDelay({ success: false, message: 'Instância não encontrada!' });
+  }
+
+  mockSettings.instances.splice(instanceIndex, 1);
+  return artificialDelay({ success: true, message: 'Instância removida com sucesso!' });
 };

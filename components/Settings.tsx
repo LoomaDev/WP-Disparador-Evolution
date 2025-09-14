@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { getSettings, updateSettings, testApiConnection } from '../services/apiService';
-import type { AppSettings } from '../types';
+import type { EvolutionSettings } from '../types';
 import { EyeIcon, EyeOffIcon, CheckCircleIcon, XCircleIcon } from './icons/Icons';
 import ThemeToggle from './ThemeToggle';
+import InstanceManager from './InstanceManager';
 
 type TestStatus = 'idle' | 'testing' | 'success' | 'error';
 
@@ -13,8 +14,16 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ theme, toggleTheme }) => {
-  const [settings, setSettings] = useState<AppSettings>({ apiUrl: '', apiKey: '', defaultMessage: '' });
+  const [settings, setSettings] = useState<EvolutionSettings>({ 
+    apiUrl: '', 
+    apiKey: '', 
+    globalApiKey: '',
+    defaultMessage: '',
+    instances: [],
+    selectedInstance: undefined
+  });
   const [showApiKey, setShowApiKey] = useState(false);
+  const [showGlobalApiKey, setShowGlobalApiKey] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [testStatus, setTestStatus] = useState<TestStatus>('idle');
@@ -74,7 +83,27 @@ const Settings: React.FC<SettingsProps> = ({ theme, toggleTheme }) => {
             />
           </div>
           <div>
-            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Chave da API (API Key)</label>
+            <label htmlFor="globalApiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Chave Global da API (Global API Key)</label>
+            <div className="mt-1 relative rounded-md shadow-sm">
+              <input
+                type={showGlobalApiKey ? 'text' : 'password'}
+                id="globalApiKey"
+                name="globalApiKey"
+                value={settings.globalApiKey}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm bg-white dark:bg-gray-700 dark:text-gray-200"
+                placeholder="Chave global para gerenciar instâncias"
+              />
+              <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+                <button type="button" onClick={() => setShowGlobalApiKey(!showGlobalApiKey)} className="text-gray-400 hover:text-gray-600">
+                  {showGlobalApiKey ? <EyeOffIcon /> : <EyeIcon />}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div>
+            <label htmlFor="apiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Chave da API da Instância (Instance API Key)</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <input
                 type={showApiKey ? 'text' : 'password'}
@@ -83,6 +112,7 @@ const Settings: React.FC<SettingsProps> = ({ theme, toggleTheme }) => {
                 value={settings.apiKey}
                 onChange={handleChange}
                 className="block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm bg-white dark:bg-gray-700 dark:text-gray-200"
+                placeholder="Chave da instância específica"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                 <button type="button" onClick={() => setShowApiKey(!showApiKey)} className="text-gray-400 hover:text-gray-600">
@@ -129,6 +159,10 @@ const Settings: React.FC<SettingsProps> = ({ theme, toggleTheme }) => {
             </div>
           )}
         </form>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
+        <InstanceManager />
       </div>
 
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
