@@ -30,8 +30,6 @@ services:
       - postgres
     ports:
       - "4000:4000"
-    volumes:
-      - ./backend:/app
     command: sh -c "npm install && npm run dev"
   
   frontend:
@@ -39,8 +37,6 @@ services:
     restart: always
     ports:
       - "3023:3023"
-    volumes:
-      - .:/app
     command: sh -c "npm install && npm run dev -- --host"
   
 volumes:
