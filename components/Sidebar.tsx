@@ -13,6 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ currentView, setCurrentView }) => {
     { id: 'dashboard', label: 'Relatórios', icon: <ReportIcon /> },
     { id: 'send', label: 'Enviar Mensagem', icon: <SendIcon /> },
     { id: 'settings', label: 'Configurações', icon: <SettingsIcon /> },
+    { id: 'global-settings', label: 'Configurações Globais', icon: <SettingsIcon /> },
   ];
 
   const baseClasses = "flex items-center w-full p-3 my-1 rounded-lg text-gray-200 hover:bg-green-600 transition-colors duration-200";

@@ -5,6 +5,7 @@ import Dashboard from './components/Dashboard';
 import SendMessage from './components/SendMessage';
 import Settings from './components/Settings';
 import Login from './components/Login';
+import GlobalSettings from './components/GlobalSettings';
 import type { View } from './types';
 
 const App: React.FC = () => {
@@ -38,6 +39,8 @@ const App: React.FC = () => {
         return <SendMessage />;
       case 'settings':
         return <Settings theme={theme} toggleTheme={toggleTheme} />;
+      case 'global-settings':
+        return <GlobalSettings />;
       default:
         return <Dashboard />;
     }
