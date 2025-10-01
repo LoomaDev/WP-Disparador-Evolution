@@ -41,8 +41,3 @@ services:
   
 volumes:
   pgdata:
-
-# Rede opcional para múltiplos serviços
-networks:
-  default:
-    name: wp-disparador-network
