@@ -38,7 +38,7 @@ services:
     build: .
     restart: always
     ports:
-      - "3000:3000"
+      - "3023:3023"
     volumes:
       - .:/app
     command: sh -c "npm install && npm run dev -- --host"
