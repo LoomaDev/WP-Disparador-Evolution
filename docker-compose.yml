@@ -36,8 +36,8 @@ services:
     build: .
     restart: always
     ports:
-      - "3000:3000"
-    command: sh -c "npm install && npm run build && npx serve -s dist -l 3000"
+      - "8080:8080"
+    command: sh -c "npm install && npm run build && npx serve -s dist -l 8080"
   
 volumes:
   pgdata:
