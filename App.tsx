@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import Dashboard from './components/Dashboard';
 import SendMessage from './components/SendMessage';
 import Settings from './components/Settings';
+import Login from './components/Login';
 import type { View } from './types';
 
 const App: React.FC = () => {
@@ -42,6 +43,9 @@ const App: React.FC = () => {
     }
   };
 
+  if (!localStorage.getItem('token')) {
+    return <Login />;
+  }
   return (
     <div className="flex h-screen bg-gray-100 dark:bg-gray-900 font-sans">
       <Sidebar currentView={currentView} setCurrentView={setCurrentView} />
