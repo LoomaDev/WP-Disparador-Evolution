@@ -9,6 +9,7 @@ export default defineConfig({
     allowedHosts: [
       'localhost',
       '127.0.0.1',
+      'disparadorwp.loomadev.com.br',
       process.env.REPLIT_DEV_DOMAIN,
       ...(process.env.REPLIT_DOMAINS || '').split(',').map(s => s.trim())
     ].filter(Boolean)
