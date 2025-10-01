@@ -19,6 +19,50 @@ services:
           memory: 512M
         reservations:
           memory: 256M
+  
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: wp_disparador
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha_segura
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  
+  backend:
+    build: ./backend
+    restart: always
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: wp_disparador
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha_segura
+      JWT_SECRET: umsegredoseguro
+      EVOLUTION_API_URL: https://sua-evolution-api.com/v1
+      EVOLUTION_GLOBAL_API_KEY: ""
+    depends_on:
+      - postgres
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./backend:/app
+    command: sh -c "npm install && npm run dev"
+  
+  frontend:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+    command: sh -c "npm install && npm run dev -- --host"
+  
+volumes:
+  pgdata:
 
 # Rede opcional para múltiplos serviços
 networks:
